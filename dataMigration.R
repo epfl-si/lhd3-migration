@@ -3,12 +3,16 @@ library(DBI)
 library(dplyr)
 library(dbplyr)
 
-source('/home/rmaggi/dev/R/lhd_biological.R') # max_id~1000
-source('/home/rmaggi/dev/R/lhd_chemical.R')
-source('/home/rmaggi/dev/R/lhd_gas.R')
-source('/home/rmaggi/dev/R/lhd_cryo.R')
-source('/home/rmaggi/dev/R/lhd_laser.R')
-source('/home/rmaggi/dev/R/lhd_mag.R')
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_biological.R') # max_id~1000
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_chemical.R')
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_gas.R')
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_cryo.R')
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_laser.R')
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_mag.R') # ~160
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_electrical.R')
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_emr.R')
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_ils.R')
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_nano.R') # ~1200
 
 # Connect to my-db as defined in /etc/mysql/my.cnf
 con <- dbConnect(RMariaDB::MariaDB(), default.file = '/etc/mysql/my.cnf', group = "lhd")
@@ -73,6 +77,9 @@ addAdditionalInfo(biologicalToBeMigrated, 'Biological', NULL)
 magneticToBeMigrated <- insertMagnetic(con, formHistory('StaticMagneticField'), formChildHistory('StaticMagneticField'))
 addAdditionalInfo(magneticToBeMigrated, 'StaticMagneticField', NULL)
 
+nanoToBeMigrated <- insertNano(con, formHistory('Nanoparticles'), formChildHistory('Nanoparticles'))
+addAdditionalInfo(nanoToBeMigrated, 'Nanoparticles', NULL)
+
 chemicalToBeMigrated <- insertChemical(con, formHistory('Chemical'))
 addAdditionalInfo(chemicalToBeMigrated, 'Chemical', NULL)
 
@@ -85,6 +92,15 @@ addAdditionalInfo(cryoToBeMigrated, 'Cryogenics', getCommentsCryo(resultCryo))
 
 gasToBeMigrated <- insertLaser(con, formHistory('Laser'))
 addAdditionalInfo(gasToBeMigrated, 'Laser', NULL)
+
+electricalToBeMigrated <- insertElectrical(con, formHistory('Electrical'))
+addAdditionalInfo(electricalToBeMigrated, 'Electrical', NULL)
+
+emrToBeMigrated <- insertEmr(con, formHistory('TimeVaryingEMF'))
+addAdditionalInfo(emrToBeMigrated, 'TimeVaryingEMF', NULL)
+
+ilsToBeMigrated <- insertIls(con, formHistory('IncoherentLightSource'))
+addAdditionalInfo(ilsToBeMigrated, 'IncoherentLightSource', NULL)
 
 # ---------------------------------------------------
 
