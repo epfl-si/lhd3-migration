@@ -47,7 +47,7 @@ insertMagnetic <- function(con, formHistory, formChildHistory) {
       other_rooms = ifelse(is.na(other_rooms), '', other_rooms)
     ) %>%
     mutate(
-      submission = ifelse(is.na(line_place), '', paste0('{"data":{"line":"',line,'","position":"',ifelse(line_place=='f', 'on the floor', ifelse(line_place=='n', 'not drawn on the floor', 'on the magnet')),'","otherImpactedRooms":[',other_rooms,'],"status":"Default","delete":false,"comment":"',comment,'"}}'))
+      submission = ifelse(is.na(line_place), '', paste0('{"data":{"line":"',line,'","position":"',ifelse(line_place=='f', 'on the floor', ifelse(line_place=='n', 'not drawn on the floor', 'on the magnet')),'","otherImpactedRooms":[',other_rooms,'],"status":"Default","delete":false,"comment":"',ifelse(is.na(comment), '', comment),'"}}'))
     ) %>%
     filter(submission != '') %>%
     select('id_lab_has_hazards', 'id_hazard_form_child_history', 'submission')
