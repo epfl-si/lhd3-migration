@@ -13,6 +13,7 @@ source('/home/rmaggi/dev/R/lhd3-migration/lhd_electrical.R')
 source('/home/rmaggi/dev/R/lhd3-migration/lhd_emr.R')
 source('/home/rmaggi/dev/R/lhd3-migration/lhd_ils.R')
 source('/home/rmaggi/dev/R/lhd3-migration/lhd_nano.R') # ~1200
+source('/home/rmaggi/dev/R/lhd3-migration/lhd_biological_filePath.R')
 
 # Connect to my-db as defined in /etc/mysql/my.cnf
 con <- dbConnect(RMariaDB::MariaDB(), default.file = '/etc/mysql/my.cnf', group = "lhd")
@@ -101,6 +102,8 @@ addAdditionalInfo(emrToBeMigrated, 'TimeVaryingEMF', NULL)
 
 ilsToBeMigrated <- insertIls(con, formHistory('IncoherentLightSource'))
 addAdditionalInfo(ilsToBeMigrated, 'IncoherentLightSource', NULL)
+
+insertBioOrgFilePath()
 
 # ---------------------------------------------------
 
