@@ -16,7 +16,13 @@ source('/home/rmaggi/dev/R/lhd3-migration/lhd_nano.R') # ~1200
 source('/home/rmaggi/dev/R/lhd3-migration/lhd_biological_filePath.R')
 
 # Connect to my-db as defined in /etc/mysql/my.cnf
-con <- dbConnect(RMariaDB::MariaDB(), default.file = '/etc/mysql/my.cnf', group = "lhd")
+# con <- dbConnect(RMariaDB::MariaDB(), default.file = '/etc/mysql/my.cnf', group = "lhd")
+dbName <- Sys.getenv("MYSQL_LHD_V2_DBNAME")
+dbhost <- Sys.getenv("MYSQL_LHD_V2_HOST")
+dbPassword <- Sys.getenv("MYSQL_LHD_V2_PASSWORD")
+dbPort <- Sys.getenv("MYSQL_LHD_V2_PORT")
+dbUser <- Sys.getenv("MYSQL_LHD_V2_USER")
+con <- dbConnect(RMariaDB::MariaDB(), username = dbUser, password = dbPassword, host = dbhost, port = dbPort, dbname = dbName)
 
 # --------------------------------------------------- Base data
 # get category by category name
