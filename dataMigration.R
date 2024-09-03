@@ -3,17 +3,17 @@ library(DBI)
 library(dplyr)
 library(dbplyr)
 
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_biological.R') # max_id~1000
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_chemical.R')
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_gas.R')
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_cryo.R')
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_laser.R')
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_mag.R') # ~160
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_electrical.R')
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_emr.R')
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_ils.R')
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_nano.R') # ~1200
-source('/home/rmaggi/dev/R/lhd3-migration/lhd_biological_filePath.R')
+source('lhd_biological.R') # max_id~1000
+source('lhd_chemical.R')
+source('lhd_gas.R')
+source('lhd_cryo.R')
+source('lhd_laser.R')
+source('lhd_mag.R') # ~160
+source('lhd_electrical.R')
+source('lhd_emr.R')
+source('lhd_ils.R')
+source('lhd_nano.R') # ~1200
+source('lhd_biological_filePath.R')
 
 # Connect to my-db as defined in /etc/mysql/my.cnf
 # con <- dbConnect(RMariaDB::MariaDB(), default.file = '/etc/mysql/my.cnf', group = "lhd")
