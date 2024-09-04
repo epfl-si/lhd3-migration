@@ -17,7 +17,7 @@ insertElectrical <- function(con, formHistory) {
                                 ifelse(access == 2, 'Electrod is accessible and can be touched', '')))
     ) %>%
     mutate(
-      submission = paste0('{"data":{"capacitor":',ifelse(is.na(capacitor_boolean),'""',capacitor_boolean),',"currentType":"',currentType,'","state":"',ifelse(is.na(stateNew),'',stateNew),'","access":"',ifelse(is.na(accessNew),'',accessNew),'","comment":"","status":"Default","delete":false,"qBatteryMAh":"',ifelse(is.na(i_battery), '', i_battery),'","voltageV":"',voltage,'","current":"',ifelse(is.na(i), '', i),'"}}'),
+      submission = paste0('{"data":{"capacitor":',ifelse(is.na(capacitor_boolean),'""',tolower(capacitor_boolean)),',"currentType":"',currentType,'","state":"',ifelse(is.na(stateNew),'',stateNew),'","access":"',ifelse(is.na(accessNew),'',accessNew),'","comment":"","status":"Default","delete":false,"qBatteryMAh":"',ifelse(is.na(i_battery), '', i_battery),'","voltageV":"',voltage,'","current":"',ifelse(is.na(i), '', i),'"}}'),
     ) %>%
     select('id_lab', 'id_hazard_form_history', 'submission') %>%
     filter(submission != '{"data":{"capacitor":"","currentType":"","state":"","access":"","comment":"","status":"Default","delete":false,"qBatteryMAh":"","voltageV":"","current":""}}')

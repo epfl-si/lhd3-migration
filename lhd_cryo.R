@@ -13,7 +13,7 @@ insertCryo <- function(con, formHistory, resultCryo) {
   dataToBeMigrated <- resultCryo %>%
     mutate(
       id_hazard_form_history = formHistory$id_hazard_form_history[1],
-      submission = paste0('{"data":{"container":{"name":"Dewar"},"typeOfCryoliquid":"',liquid,'","o2DeficiencyDetectorNecessary":false,"numberOfO2DeficiencyDetectors":0,"status":"Default","delete":false,"volumeL":"',ifelse(is.na(liters), '', liters),'"}}')
+      submission = paste0('{"data":{"container":{"name":"Dewar"},"typeOfCryoliquid":"',liquid,'","o2DeficiencyDetectorNecessary":false,"numberOfO2DeficiencyDetectors":0,"comment":"","status":"Default","delete":false,"volumeL":"',ifelse(is.na(liters), '', liters),'"}}')
     ) %>% 
     select('id_lab', 'id_hazard_form_history', 'submission') 
   

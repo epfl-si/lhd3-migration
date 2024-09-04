@@ -8,7 +8,7 @@ insertLaser <- function(con, formHistory) {
   dataToBeMigrated <- result %>%
     mutate(
       id_hazard_form_history = formHistory$id_hazard_form_history[1],
-      submission = paste0('{"data":{"laserClass":"',replaceNA(laser_class),'","laserMode":"',replaceNA(laser_mode),'","status":"Default","delete":false,"wavelengthNM":"',replaceNA(laser_wave),'","powerW":"',replaceNA(laser_power),'","energyMJ":"',ifelse(is.na(laser_energy), '', laser_energy*1000),'","pulseDurationNs":"',replaceNA(laser_pulse),'","frequencyHz":"',replaceNA(laser_frequency),'"}}')
+      submission = paste0('{"data":{"laserClass":"',replaceNA(laser_class),'","laserMode":"',replaceNA(laser_mode),'","comment":"","status":"Default","delete":false,"wavelengthNM":"',replaceNA(laser_wave),'","powerW":"',replaceNA(laser_power),'","energyMJ":"',ifelse(is.na(laser_energy), '', laser_energy*1000),'","pulseDurationNs":"',replaceNA(laser_pulse),'","frequencyHz":"',replaceNA(laser_frequency),'"}}')
     ) %>% 
     select('id_lab', 'id_hazard_form_history', 'submission')
   
