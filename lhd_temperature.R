@@ -8,7 +8,7 @@ insertTemp <- function(con, formHistory) {
   dataToBeMigrated <- result %>%
     mutate(
       id_hazard_form_history = formHistory$id_hazard_form_history[1],
-      submission = paste0('{"data":{"type":"',ifelse(is.na(tdegree_type), '', ifelse(tdegree_type=='EN', 'Environment', ifelse(tdegree_type=='CO', 'Contact', 'Projection'))),'","place":"',ifelse(is.na(tdegree_place), '', ifelse(tdegree_place=='I', 'Indoor', 'Outdoor')),'","status":"Default","delete":false,"temperature":',ifelse(is.na(tdegree),'',tdegree),'}}'),
+      submission = paste0('{"data":{"type":',ifelse(is.na(tdegree_type), '', ifelse(tdegree_type=='EN', '"Environment"', ifelse(tdegree_type=='CO', '"Contact"', '"Projection"'))),ifelse(is.na(tdegree_place), '', paste0(',"place":',ifelse(tdegree_place=='I', '"Indoor"', '"Outdoor"'))),',"status":"Default","delete":false',ifelse(is.na(tdegree),'',paste0(',"temperature":',tdegree)),'}}'),
     ) %>%
     select('id_lab', 'id_hazard_form_history', 'submission')
   
