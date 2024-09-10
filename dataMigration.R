@@ -3,6 +3,19 @@ library(DBI)
 library(dplyr)
 library(dbplyr)
 
+# source('~/dev/R/lhd3-migration/lhd_biological.R') # max_id~1000
+# source('~/dev/R/lhd3-migration/lhd_chemical.R')
+# source('~/dev/R/lhd3-migration/lhd_gas.R')
+# source('~/dev/R/lhd3-migration/lhd_cryo.R')
+# source('~/dev/R/lhd3-migration/lhd_laser.R')
+# source('~/dev/R/lhd3-migration/lhd_mag.R') # ~160
+# source('~/dev/R/lhd3-migration/lhd_electrical.R')
+# source('~/dev/R/lhd3-migration/lhd_emr.R')
+# source('~/dev/R/lhd3-migration/lhd_ils.R')
+# source('~/dev/R/lhd3-migration/lhd_nano.R') # ~1200
+# source('~/dev/R/lhd3-migration/lhd_temperature.R')
+# source('~/dev/R/lhd3-migration/lhd_biological_filePath.R')
+
 source('lhd_biological.R') # max_id~1000
 source('lhd_chemical.R')
 source('lhd_gas.R')
@@ -13,6 +26,7 @@ source('lhd_electrical.R')
 source('lhd_emr.R')
 source('lhd_ils.R')
 source('lhd_nano.R') # ~1200
+source('lhd_temperature.R')
 source('lhd_biological_filePath.R')
 
 # Connect to my-db as defined in /etc/mysql/my.cnf
@@ -110,6 +124,9 @@ addAdditionalInfo(emrToBeMigrated, 'TimeVaryingEMF', NULL)
 
 ilsToBeMigrated <- insertIls(con, formHistory('IncoherentLightSource'))
 addAdditionalInfo(ilsToBeMigrated, 'IncoherentLightSource', NULL)
+
+tempToBeMigrated <- insertTemp(con, formHistory('Temperature'))
+addAdditionalInfo(tempToBeMigrated, 'Temperature', NULL)
 
 insertBioOrgFilePath()
 
