@@ -94,6 +94,8 @@ addAdditionalInfo <- function(data, categoryName, comments) {
 }
 # ---------------------------------------------------
 
+insertBioOrgFilePath()
+
 biologicalToBeMigrated <- insertBiological(con, formHistory('Biological'), formChildHistory('Biological'))
 addAdditionalInfo(biologicalToBeMigrated, 'Biological', NULL)
 
@@ -128,7 +130,6 @@ addAdditionalInfo(ilsToBeMigrated, 'IncoherentLightSource', NULL)
 tempToBeMigrated <- insertTemp(con, formHistory('Temperature'))
 addAdditionalInfo(tempToBeMigrated, 'Temperature', NULL)
 
-insertBioOrgFilePath()
 
 # ---------------------------------------------------
 

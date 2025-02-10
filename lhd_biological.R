@@ -25,7 +25,7 @@ insertBiological <- function(con, formHistory, formChildHistory) {
   dataToBeMigratedForChild <- result %>%
     mutate(
       id_hazard_form_child_history = formChildHistory$id_hazard_form_child_history[1],
-      submission = paste0('{"data":{"organism":{"organism":"',organism,'","risk_group":',risk_group,',"filePath":"',filePath,'"},"status":"Default","delete":false,"riskGroup":',risk_group,',"linkFile":"',filePath,'"}}')
+      submission = paste0('{"data":{"organism":{"organism":"',organism,'","risk_group":',risk_group,',"filePath":"',filePath,'"},"status":"Default","delete":false,"riskGroup":',risk_group,',"fileLink":"',filePath,'"}}')
     ) %>% 
     select('id_bio', 'id_hazard_form_child_history', 'submission', 'organism') %>%
     filter(!is.na(organism)) %>%
