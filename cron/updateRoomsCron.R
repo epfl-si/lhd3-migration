@@ -78,6 +78,30 @@ getLabType <- function(sciper, apiLabType, lhdLabs) {
   }
 }
 
+addApiLabTypeToDB <- function(df) {
+  apiLabTypeList <- unique(df[, c("facultyuse", "dincat")])
+  for (i in 1:nrow(apiLabTypeList)) {
+    dincat <- str_trim(apiLabTypeList$dincat[i])
+    facultyuse <- str_trim(apiLabTypeList$facultyuse[i])
+    type <- tbl(con, "labType") %>%
+      filter(id_labTypeCristal == dincat) %>%
+      select("id_labTypeCristal", "labType") %>%
+      collect()
+
+    if(count(type) == 0) {
+      newType <- data.frame(
+        labType = facultyuse,
+        id_labTypeCristal = dincat
+      )
+
+      dbAppendTable(con, 'labType', newType)
+    } else {
+      query <- paste0('UPDATE labType SET labType = "', facultyuse, '" WHERE id_labTypeCristal = ', apiLabTypeList$dincat[i])
+      dbExecute(con, query)
+    }
+  }
+}
+
 lhdLabs <- getLhdLabs(con)
 lhdScipers <- getScipersFromLhd(con, lhdLabs)
 
@@ -105,6 +129,8 @@ if (status_code(apiRooms) == 200) {
   diffScipers <- setdiff(lhdScipers$sciper_lab, df$id)
   difflabType <- setdiff(df$facultyuse, lhdLabType2$labType)
   print(diffScipers)
+  addApiLabTypeToDB(df);
+
   for (i in 1:nrow(df)) {
     parts <- strsplit(df$name[i], " ")[[1]]
     labId <- tail(parts, 1)
