@@ -14,7 +14,6 @@ insertBioOrgFilePath <- function() {
       path,
       sub(".*?/([0-9]+).*", "\\1", path)
     )
-    print(query)
     dbExecute(con, query)
   }
   # ---------------------------------------------------

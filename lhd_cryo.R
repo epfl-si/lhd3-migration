@@ -26,7 +26,7 @@ getCommentsCryo <- function(resultCryo) {
   # get all comments in one single field for each room
   comments <- resultCryo %>% 
     group_by(id_lab) %>% 
-    mutate(comment = paste0(ifelse(is.na(comment), '', comment), collapse = "\n")) %>%
+    mutate(comment = paste0(ifelse(is.na(comment), '', gsub("\r?\n", "\\\\n", comment)), collapse = "\n")) %>%
     select('id_lab', 'comment') %>%
     distinct(id_lab, comment)
   return(comments)
