@@ -11,7 +11,7 @@ insertBiological <- function(con, formHistory, formChildHistory) {
   dataToBeMigrated <- result %>%
     mutate(
       id_hazard_form_history = formHistory$id_hazard_form_history[1],
-      submission = paste0('{"data":{"comment":"',ifelse(is.na(comment), '', comment),'","status":"Default","delete":false,"biosafetyLevel":',bio_level,'}}')
+      submission = paste0('{"data":{"comment":"',ifelse(is.na(comment), '', gsub("\r?\n", "\\\\n", comment)),'","status":"Default","delete":false,"biosafetyLevel":',bio_level,'}}')
     ) %>% 
     select('id_bio', 'id_lab', 'id_hazard_form_history', 'submission')  %>%
     rename(id_lab_has_hazards = id_bio) %>%
