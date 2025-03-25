@@ -139,7 +139,6 @@ if (status_code(apiRooms) == 200) {
                     df$floor[i], '", lab = "', labId, '", lab_display = "', df$name[i], '", site = "', df$building$site$label[i], '", vol = ', getVolume(df$surface[i], df$height[i]), 
                     ', lab_type_is_different = ', newLabType$is_different, ', id_labType = ', newLabType$lab_type,' WHERE sciper_lab = ',df$id[i])
 
-    print(query)
     dbExecute(con, query)
   }
 } else {
