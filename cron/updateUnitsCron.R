@@ -1,6 +1,5 @@
 library(RMariaDB)
 library(DBI)
-library(dplyr)
 library(dbplyr)
 library(httr)
 library(jsonlite)
@@ -18,25 +17,25 @@ lhdApiPassword <- Sys.getenv("LHD_API_PASSWORD")
 con <- dbConnect(RMariaDB::MariaDB(), username = dbUserVar, password = dbPasswordVar, host = dbHostVar, port = dbPortVar, dbname = dbNameVar)
 
 getScipersFromLhd <- function(con) {
-  scipersId <- tbl(con, "unit") %>% 
-    filter(!is.na(sciper_unit)) %>% 
-    select('sciper_unit') %>% 
+  scipersId <- tbl(con, "unit") %>%
+    filter(!is.na(sciper_unit)) %>%
+    select('sciper_unit') %>%
     collect()
   return(scipersId)
 }
 
 searchResponsible <- function(con, idResponsable) {
-  lhdResponsable <- tbl(con, "person") %>% 
-    filter(sciper == idResponsable) %>% 
-    select('id_person') %>% 
+  lhdResponsable <- tbl(con, "person") %>%
+    filter(sciper == idResponsable) %>%
+    select('id_person') %>%
     collect()
-  
+
   return(lhdResponsable)
 }
 
 searchOrCreateResponsible <- function(con, idResponsable, responsible, i) {
   lhdResponsable <- searchResponsible(con, idResponsable)
-  
+
   if(count(lhdResponsable) == 0) {
     newPerson <- data.frame(
       name = responsible$firstname[i],
@@ -44,7 +43,7 @@ searchOrCreateResponsible <- function(con, idResponsable, responsible, i) {
       sciper = responsible$id[i],
       email = responsible$email[i]
     )
-    
+
     dbAppendTable(con, 'person', newPerson)
     lhdResponsable <- searchResponsible(con, idResponsable)
   }
@@ -52,41 +51,41 @@ searchOrCreateResponsible <- function(con, idResponsable, responsible, i) {
 }
 
 createSubunPro <- function(con, responsibleid, unitSciper) {
-  unitLhd <- tbl(con, "unit") %>% 
-    filter(sciper_unit == unitSciper) %>% 
-    select('id_unit') %>% 
+  unitLhd <- tbl(con, "unit") %>%
+    filter(sciper_unit == unitSciper) %>%
+    select('id_unit') %>%
     collect()
   subunpro <- tbl(con, "subunpro") %>%
-    filter(id_unit == unitLhd$id_unit, id_person == responsibleid) %>% 
+    filter(id_unit == unitLhd$id_unit, id_person == responsibleid) %>%
     collect()
-  
+
   if(count(subunpro) == 0) {
     newSubunPro <- data.frame(
       id_unit = unitLhd$id_unit,
       id_person = responsibleid
     )
-    
+
     dbAppendTable(con, 'subunpro', newSubunPro)
   }
 }
 
 searchFaculty <- function(con, name) {
-  lhdFaculty <- tbl(con, "faculty") %>% 
-    filter(name_faculty == name) %>% 
-    select('id_faculty') %>% 
+  lhdFaculty <- tbl(con, "faculty") %>%
+    filter(name_faculty == name) %>%
+    select('id_faculty') %>%
     collect()
-  
+
   return(lhdFaculty)
 }
 
 searchOrCreateFaculty <- function(con, name) {
   lhdFaculty <- searchFaculty(con, name)
-  
+
   if(count(lhdFaculty) == 0) {
     newFaculty <- data.frame(
       name_faculty = name
     )
-    
+
     dbAppendTable(con, 'faculty', newFaculty)
     lhdFaculty <- searchFaculty(con, name)
   }
@@ -94,23 +93,23 @@ searchOrCreateFaculty <- function(con, name) {
 }
 
 searchInstitut <- function(con, name) {
-  lhdInstitut <- tbl(con, "institut") %>% 
-    filter(name_institut == name) %>% 
-    select('id_institut') %>% 
+  lhdInstitut <- tbl(con, "institut") %>%
+    filter(name_institut == name) %>%
+    select('id_institut') %>%
     collect()
-  
+
   return(lhdInstitut)
 }
 
 searchOrCreateInstitut <- function(con, name, faculty) {
   lhdInstitut <- searchInstitut(con, name)
-  
+
   if(count(lhdInstitut) == 0) {
     newInstitut <- data.frame(
       name_institut = name,
       id_faculty = faculty
     )
-    
+
     dbAppendTable(con, 'institut', newInstitut)
     lhdInstitut <- searchInstitut(con, name)
   }
@@ -137,7 +136,7 @@ if (status_code(apiUnits) == 200) {
   unitListFromApi <- content$units
   df <- as.data.frame(unitListFromApi)
   diffScipers <- setdiff(lhdUnitScipers$sciper_unit, df$id)
-  print(diffScipers)
+  # print(diffScipers)
   for (i in 1:nrow(df)) {
     pathArray <- strsplit(df$path[i], split = " ")
     institut <- vapply(pathArray, `[`, 3, FUN.VALUE=character(1))
@@ -155,7 +154,7 @@ if (status_code(apiUnits) == 200) {
     createSubunPro(con, lhdResponsable$id_person, df$id[i])
   }
 } else {
-  print(paste("Error:", apiUnits))
+  # print(paste("Error:", apiUnits))
 }
 
 # ---------------------------------------------------
