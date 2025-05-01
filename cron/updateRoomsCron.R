@@ -1,6 +1,5 @@
 library(RMariaDB)
 library(DBI)
-library(dplyr)
 library(dbplyr)
 library(httr)
 library(jsonlite)
@@ -18,16 +17,16 @@ lhdApiPassword <- Sys.getenv("LHD_API_PASSWORD")
 con <- dbConnect(RMariaDB::MariaDB(), username = dbUserVar, password = dbPasswordVar, host = dbHostVar, port = dbPortVar, dbname = dbNameVar)
 
 getLhdLabs <- function(con) {
-  scipersId <- tbl(con, "lab") %>% 
-    filter(!is.na(sciper_lab)) %>% 
-    select('sciper_lab', 'id_labType', 'lab_type_is_different') %>% 
+  scipersId <- tbl(con, "lab") %>%
+    filter(!is.na(sciper_lab)) %>%
+    select('sciper_lab', 'id_labType', 'lab_type_is_different') %>%
     collect()
   return(scipersId)
 }
 
 getScipersFromLhd <- function(con, labs) {
-  scipersId <- labs %>% 
-    select('sciper_lab') %>% 
+  scipersId <- labs %>%
+    select('sciper_lab') %>%
     collect()
   return(scipersId)
 }
@@ -44,14 +43,14 @@ getLabType <- function(sciper, apiLabType, lhdLabs) {
   lab <- lhdLabs %>%
     filter(sciper_lab == sciper) %>%
     collect()
-  
-  lhdLabType <- tbl(con, "labType") %>% 
-    filter(id_labType == lab$id_labType) %>% 
+
+  lhdLabType <- tbl(con, "labType") %>%
+    filter(id_labType == lab$id_labType) %>%
     collect()
-  
+
   if (!lab$lab_type_is_different) {
-    newLhdLabType <- tbl(con, "labType") %>% 
-      filter(labType == apiLabType) %>% 
+    newLhdLabType <- tbl(con, "labType") %>%
+      filter(labType == apiLabType) %>%
       collect()
     value <- data.frame(
       lab_type = newLhdLabType$id_labType[1],
@@ -60,8 +59,8 @@ getLabType <- function(sciper, apiLabType, lhdLabs) {
     return(value)
   } else {
     if (apiLabType == lhdLabType$labType) {
-      newLhdLabType <- tbl(con, "labType") %>% 
-        filter(labType == apiLabType) %>% 
+      newLhdLabType <- tbl(con, "labType") %>%
+        filter(labType == apiLabType) %>%
         collect()
       value <- data.frame(
         lab_type = newLhdLabType$id_labType[1],
@@ -96,7 +95,8 @@ addApiLabTypeToDB <- function(df) {
 
       dbAppendTable(con, 'labType', newType)
     } else {
-      query <- paste0('UPDATE labType SET labType = "', facultyuse, '" WHERE id_labTypeCristal = ', apiLabTypeList$dincat[i])
+      facultyUseEscaped <- gsub("'", "''", facultyuse)
+      query <- paste0("UPDATE labType SET labType = '", facultyUseEscaped, "' WHERE id_labTypeCristal = '", dincat, "'")
       dbExecute(con, query)
     }
   }
@@ -121,28 +121,28 @@ apiRooms <- POST(
 if (status_code(apiRooms) == 200) {
   content <- fromJSON(rawToChar(apiRooms$content))
   listFromApi <- content$rooms
-  
-  lhdLabType2 <- tbl(con, "labType") %>% 
+
+  lhdLabType2 <- tbl(con, "labType") %>%
     collect()
-  
+
   df <- as.data.frame(listFromApi)
   diffScipers <- setdiff(lhdScipers$sciper_lab, df$id)
   difflabType <- setdiff(df$facultyuse, lhdLabType2$labType)
-  print(diffScipers)
+  # print(diffScipers)
   addApiLabTypeToDB(df);
 
   for (i in 1:nrow(df)) {
     parts <- strsplit(df$name[i], " ")[[1]]
     labId <- tail(parts, 1)
     newLabType <- getLabType(df$id[i], str_trim(df$facultyuse[i]), lhdLabs)
-    query <- paste0('UPDATE lab SET building = "', df$building$name[i], '"', ifelse(df$sector[i] != "Z", paste0(', sector = "', df$zone[i], '"'), ""), ', floor = "', 
-                    df$floor[i], '", lab = "', labId, '", lab_display = "', df$name[i], '", site = "', df$building$site$label[i], '", vol = ', getVolume(df$surface[i], df$height[i]), 
+    query <- paste0('UPDATE lab SET building = "', df$building$name[i], '"', ifelse(df$sector[i] != "Z", paste0(', sector = "', df$zone[i], '"'), ""), ', floor = "',
+                    df$floor[i], '", lab = "', labId, '", lab_display = "', df$name[i], '", site = "', df$building$site$label[i], '", vol = ', getVolume(df$surface[i], df$height[i]),
                     ', lab_type_is_different = ', newLabType$is_different, ', id_labType = ', newLabType$lab_type,' WHERE sciper_lab = ',df$id[i])
 
     dbExecute(con, query)
   }
 } else {
-  print(paste("Error:", apiUnits))
+  # print(paste("Error:", apiUnits))
 }
 
 # ---------------------------------------------------
