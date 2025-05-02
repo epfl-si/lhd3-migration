@@ -4,6 +4,7 @@ library(dbplyr)
 library(httr)
 library(jsonlite)
 library(stringr)
+library(dplyr)
 
 # Connect to my-db as defined in /etc/mysql/my.cnf
 # con <- dbConnect(RMariaDB::MariaDB(), default.file = '/etc/mysql/my.cnf', group = "lhd")
