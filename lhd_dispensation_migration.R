@@ -66,5 +66,14 @@ holders <- tbl(con, "auth_dsps_holder") %>%
 
 dbAppendTable(con, 'dispensation_has_holder', holders)
 
+dbExecute(con, "UPDATE dispensation SET file_path = 'dispensations/97/Imprimante_3D_AI2208.jpg' WHERE id_dispensation = 97")
+dbExecute(con, "update dispensation set file_path='dispensations/47/ugh.pdf' where id_dispensation=47")
+dbExecute(con, "update dispensation set file_path='dispensations/76/DI_227743.pdf' where id_dispensation=76")
+dbExecute(con, "update dispensation set file_path='dispensations/136/Screenshot_2025-04-28_at_12.00.11.png' where id_dispensation=136")
+dbExecute(con, "update dispensation set file_path='dispensations/137/AI_0235.jpg' where id_dispensation=137")
+dbExecute(con, "update dispensation set file_path='dispensations/88/Peptide_synthesizer_CH_B3_464.jpg' where id_dispensation=88")
+dbExecute(con, "update dispensation set file_path='dispensations/89/1687780510897.jpg' where id_dispensation=89")
+dbExecute(con, "update dispensation set file_path='dispensations/84/Photofixateur_UPCDA_SV_2732.2.jpg' where id_dispensation=84")
+
 # Disconnect from the database
 dbDisconnect(con)
