@@ -37,7 +37,8 @@ dispensations <- tbl(con, "auth_dsps") %>%
     renewals = 0,
     modified_by = 'Import',
     modified_on = now,
-    other_subject = ''
+    other_subject = '',
+    auth_dsps = str_replace_all(auth_dsps, "DSPS", "DISP")
     ) %>%
   select('id_auth_dsps' , 'auth_dsps', 'author' , 'id_dispensation_subject' ,'requires' , 'comment', 'status', 'date_start', 'date_end', 'date', 'renewals', 'modified_by', 'modified_on', 'other_subject') %>%
   rename(id_dispensation = id_auth_dsps ) %>%
