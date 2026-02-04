@@ -23,8 +23,12 @@ statusToImport <- c('Expired','Active')
 now <- Sys.time()
 
 latest_versions <- tbl(con, "auth_dsps_version") %>%
+  filter(status %in% statusToImport) %>%
   group_by(id_auth_dsps) %>%
-  summarise(max_version_id = max(id_auth_dsps_version, na.rm = TRUE)) %>%
+  summarise(
+    max_version_id = max(id_auth_dsps_version, na.rm = TRUE), 
+    record_count = n()
+  ) %>%
   ungroup()
 
 dispensations <- tbl(con, "auth_dsps") %>%
@@ -34,13 +38,13 @@ dispensations <- tbl(con, "auth_dsps") %>%
   filter(id_auth_dsps_version == max_version_id) %>%
   filter(status %in% statusToImport) %>%
   mutate(
-    renewals = 0,
+    renewals = record_count,
     modified_by = 'Import',
     modified_on = now,
-    other_subject = '',
+    subject_other = '',
     auth_dsps = str_replace_all(auth_dsps, "DSPS", "DISP")
     ) %>%
-  select('id_auth_dsps' , 'auth_dsps', 'author' , 'id_dispensation_subject' ,'requires' , 'comment', 'status', 'date_start', 'date_end', 'date', 'renewals', 'modified_by', 'modified_on', 'other_subject') %>%
+  select('id_auth_dsps' , 'auth_dsps', 'author' , 'id_dispensation_subject' ,'requires' , 'comment', 'status', 'date_start', 'date_end', 'date', 'renewals', 'modified_by', 'modified_on', 'subject_other') %>%
   rename(id_dispensation = id_auth_dsps ) %>%
   rename(dispensation = auth_dsps ) %>%
   rename(created_by = author ) %>%
