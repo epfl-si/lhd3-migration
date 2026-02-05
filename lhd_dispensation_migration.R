@@ -38,7 +38,7 @@ dispensations <- tbl(con, "auth_dsps") %>%
   filter(id_auth_dsps_version == max_version_id) %>%
   filter(status %in% statusToImport) %>%
   mutate(
-    renewals = record_count,
+    renewals = record_count - 1,
     modified_by = 'Import',
     modified_on = now,
     subject_other = '',
