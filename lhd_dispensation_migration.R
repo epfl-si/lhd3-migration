@@ -44,9 +44,8 @@ dispensations <- tbl(con, "auth_dsps") %>%
     subject_other = '',
     auth_dsps = str_replace_all(auth_dsps, "DSPS", "DISP")
     ) %>%
-  select('id_auth_dsps' , 'auth_dsps', 'author' , 'id_dispensation_subject' ,'requires' , 'comment', 'status', 'date_start', 'date_end', 'date', 'renewals', 'modified_by', 'modified_on', 'subject_other') %>%
+  select('id_auth_dsps' , 'author' , 'id_dispensation_subject' ,'requires' , 'comment', 'status', 'date_start', 'date_end', 'date', 'renewals', 'modified_by', 'modified_on', 'subject_other') %>%
   rename(id_dispensation = id_auth_dsps ) %>%
-  rename(dispensation = auth_dsps ) %>%
   rename(created_by = author ) %>%
   rename(created_on = date ) %>%
   collect()
