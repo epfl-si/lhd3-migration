@@ -45,6 +45,7 @@ dispensations <- tbl(con, "auth_dsps") %>%
     auth_dsps = str_replace_all(auth_dsps, "DSPS", "DISP")
     ) %>%
   select('id_auth_dsps' , 'author' , 'id_dispensation_subject' ,'requires' , 'comment', 'status', 'date_start', 'date_end', 'date', 'renewals', 'modified_by', 'modified_on', 'subject_other') %>%
+  filter(!id_auth_dsps %in% c(70, 51, 47, 36)) %>%
   rename(id_dispensation = id_auth_dsps ) %>%
   rename(created_by = author ) %>%
   rename(created_on = date ) %>%
@@ -57,6 +58,7 @@ rooms <- tbl(con, "auth_dsps_lab") %>%
   inner_join(tbl(con, "auth_dsps_version"), by = 'id_auth_dsps_version') %>%
   filter(status %in% statusToImport) %>%
   select(id_lab, id_dispensation = id_auth_dsps.x) %>%
+  filter(!id_dispensation %in% c(70, 51, 47, 36)) %>%
   collect()
 
 dbAppendTable(con, 'dispensation_has_room', rooms)
@@ -66,12 +68,12 @@ holders <- tbl(con, "auth_dsps_holder") %>%
   inner_join(tbl(con, "auth_dsps_version"), by = 'id_auth_dsps_version') %>%
   filter(status %in% statusToImport) %>%
   select(id_person, id_dispensation = id_auth_dsps.x) %>%
+  filter(!id_dispensation %in% c(70, 51, 47, 36)) %>%
   collect()
 
 dbAppendTable(con, 'dispensation_has_holder', holders)
 
-dbExecute(con, "UPDATE dispensation SET file_path = 'dispensations/97/Imprimante_3D_AI2208.jpg' WHERE id_dispensation = 97")
-dbExecute(con, "update dispensation set file_path='dispensations/47/ugh.pdf' where id_dispensation=47")
+dbExecute(con, "UPDATE dispensation SET file_path='dispensations/97/Imprimante_3D_AI2208.jpg' WHERE id_dispensation = 97")
 dbExecute(con, "update dispensation set file_path='dispensations/76/DI_227743.pdf' where id_dispensation=76")
 dbExecute(con, "update dispensation set file_path='dispensations/136/Screenshot_2025-04-28_at_12.00.11.png' where id_dispensation=136")
 dbExecute(con, "update dispensation set file_path='dispensations/137/AI_0235.jpg' where id_dispensation=137")
