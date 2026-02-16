@@ -39,10 +39,10 @@ searchOrCreateResponsible <- function(con, idResponsable, responsible, i) {
 
   if(count(lhdResponsable) == 0) {
     newPerson <- data.frame(
-      name = responsible$firstname[i],
-      surname = responsible$lastname[i],
+      name_person = responsible$firstname[i],
+      surname_person = responsible$lastname[i],
       sciper = responsible$id[i],
-      email = responsible$email[i]
+      email_person = responsible$email[i]
     )
 
     dbAppendTable(con, 'person', newPerson)
