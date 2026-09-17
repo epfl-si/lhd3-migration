@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libxml2-dev \
     libcurl4-openssl-dev \
-    libcurl4t64
+    libcurl4t64 \
+    libicu-dev
 
 RUN R -e "install.packages(c('RPostgres', 'DBI', 'dplyr', 'dbplyr', 'httr', 'jsonlite', 'stringr'), repos='https://packagemanager.posit.co/cran/__linux__/jammy/latest')"
 
