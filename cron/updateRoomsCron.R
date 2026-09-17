@@ -1,4 +1,4 @@
-library(RMariaDB)
+library(RPostgres)
 library(DBI)
 library(dbplyr)
 library(httr)
@@ -8,7 +8,7 @@ library(dplyr)
 
 lhdApiPassword <- Sys.getenv("LHD_API_PASSWORD")
 con <- dbConnect(
-  RPostgres::Postgres(),
+  Postgres(),
   host = Sys.getenv("POSTGRESQL_HOST", "127.0.0.1"),
   dbname = Sys.getenv("POSTGRESQL_DBNAME", "lhd"),
   user = Sys.getenv("POSTGRESQL_USER", "root"),
@@ -95,7 +95,7 @@ addApiLabTypeToDB <- function(df) {
       dbAppendTable(con, 'labType', newType)
     } else {
       facultyUseEscaped <- gsub("'", "''", facultyuse)
-      query <- paste0("UPDATE labType SET labType = '", facultyUseEscaped, "' WHERE id_labTypeCristal = '", dincat, "'")
+      query <- paste0("UPDATE \"labType\" SET \"labType\" = '", facultyUseEscaped, "' WHERE \"id_labTypeCristal\" = '", dincat, "'")
       dbExecute(con, query)
     }
   }
@@ -134,14 +134,12 @@ if (status_code(apiRooms) == 200) {
     parts <- strsplit(df$name[i], " ")[[1]]
     labId <- tail(parts, 1)
     newLabType <- getLabType(df$id[i], str_trim(df$facultyuse[i]), lhdLabs)
-    query <- paste0('UPDATE lab SET building = "', df$building$name[i], '"', ifelse(df$sector[i] != "Z", paste0(', sector = "', df$zone[i], '"'), ""), ', floor = "',
-                    df$floor[i], '", lab = "', labId, '", lab_display = "', df$name[i], '", site = "', df$building$site$label[i], '", vol = ', getVolume(df$surface[i], df$height[i]),
-                    ', lab_type_is_different = ', newLabType$is_different, ', id_labType = ', newLabType$lab_type,' WHERE sciper_lab = ',df$id[i])
+    query <- paste0('UPDATE \"lab\" SET \"building\" = \'', df$building$name[i], '\'', ifelse(df$sector[i] != "Z", paste0(', \"sector\" = \'', df$zone[i], '\''), ""), ', \"floor\" = \'',
+                    df$floor[i], '\', \"lab\" = \'', labId, '\', \"lab_display\" = \'', df$name[i], '\', \"site\" = \'', df$building$site$label[i], '\', \"vol\" = ', getVolume(df$surface[i], df$height[i]),
+                    ', \"lab_type_is_different\" = ', newLabType$is_different, ', \"id_labType\" = ', newLabType$lab_type,' WHERE \"sciper_lab\" = ',df$id[i])
 
     dbExecute(con, query)
   }
-} else {
-  # print(paste("Error:", apiUnits))
 }
 
 # ---------------------------------------------------
