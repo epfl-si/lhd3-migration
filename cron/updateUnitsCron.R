@@ -1,4 +1,4 @@
-library(RMariaDB)
+library(RPostgres)
 library(DBI)
 library(dbplyr)
 library(httr)
@@ -8,7 +8,7 @@ library(dplyr)
 
 lhdApiPassword <- Sys.getenv("LHD_API_PASSWORD")
 con <- dbConnect(
-  RPostgres::Postgres(),
+  Postgres(),
   host = Sys.getenv("POSTGRESQL_HOST", "127.0.0.1"),
   dbname = Sys.getenv("POSTGRESQL_DBNAME", "lhd"),
   user = Sys.getenv("POSTGRESQL_USER", "root"),
@@ -148,7 +148,7 @@ if (status_code(apiUnits) == 200) {
     if (!is.na(idResponsable) && idResponsable != '') {
       lhdResponsable <- searchOrCreateResponsible(con,idResponsable, df$responsible, i)
     }
-    query <- paste0("UPDATE unit SET responsible_id = ", ifelse(is.na(idResponsable), NULL, lhdResponsable$id_person), ", id_institut = ", lhdInstitut$id_institut,", name_unit = '",df$name[i],"' WHERE sciper_unit = ",df$id[i])
+    query <- paste0("UPDATE \"unit\" SET \"responsible_id\" = ", ifelse(is.na(idResponsable), NULL, lhdResponsable$id_person), ", \"id_institut\" = ", lhdInstitut$id_institut,", \"name_unit\" = '",df$name[i],"' WHERE \"sciper_unit\" = ",df$id[i])
 
     dbExecute(con, query)
     createSubunPro(con, lhdResponsable$id_person, df$id[i])

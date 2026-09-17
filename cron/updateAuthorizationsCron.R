@@ -1,4 +1,4 @@
-library(RMariaDB)
+library(RPostgres)
 library(DBI)
 library(dplyr)
 library(dbplyr)
@@ -6,7 +6,7 @@ library(stringr)
 
 lhdApiPassword <- Sys.getenv("LHD_API_PASSWORD")
 con <- dbConnect(
-  RPostgres::Postgres(),
+  Postgres(),
   host = Sys.getenv("POSTGRESQL_HOST", "127.0.0.1"),
   dbname = Sys.getenv("POSTGRESQL_DBNAME", "lhd"),
   user = Sys.getenv("POSTGRESQL_USER", "root"),
@@ -22,8 +22,7 @@ authorizations <- tbl(con, "authorization") %>%
 
 for (i in seq_len(nrow(authorizations))) {
   r <- authorizations[i, ]
-  print(r)
-  query <- paste0("UPDATE authorization SET status = 'Expired' WHERE id_authorization = ",r$id_authorization)
+  query <- paste0("UPDATE \"authorization\" SET \"status\" = 'Expired' WHERE \"id_authorization\" = ",r$id_authorization)
   dbExecute(con, query)
 
   newLog <- data.frame(
