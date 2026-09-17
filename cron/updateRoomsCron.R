@@ -6,16 +6,15 @@ library(jsonlite)
 library(stringr)
 library(dplyr)
 
-# Connect to my-db as defined in /etc/mysql/my.cnf
-# con <- dbConnect(RMariaDB::MariaDB(), default.file = '/etc/mysql/my.cnf', group = "lhd")
-
-dbNameVar <- Sys.getenv("MYSQL_LHD_V2_DBNAME")
-dbHostVar <- Sys.getenv("MYSQL_LHD_V2_HOST")
-dbPasswordVar <- Sys.getenv("MYSQL_LHD_V2_PASSWORD")
-dbPortVar <- Sys.getenv("MYSQL_LHD_V2_PORT")
-dbUserVar <- Sys.getenv("MYSQL_LHD_V2_USER")
 lhdApiPassword <- Sys.getenv("LHD_API_PASSWORD")
-con <- dbConnect(RMariaDB::MariaDB(), username = dbUserVar, password = dbPasswordVar, host = dbHostVar, port = dbPortVar, dbname = dbNameVar)
+con <- dbConnect(
+  RPostgres::Postgres(),
+  host = Sys.getenv("POSTGRESQL_HOST", "127.0.0.1"),
+  dbname = Sys.getenv("POSTGRESQL_DBNAME", "lhd"),
+  user = Sys.getenv("POSTGRESQL_USER", "root"),
+  password = Sys.getenv("POSTGRESQL_PASSWORD", "ROOT"),
+  port = Sys.getenv("POSTGRESQL_PORT", 45432)
+)
 
 getLhdLabs <- function(con) {
   scipersId <- tbl(con, "lab") %>%
