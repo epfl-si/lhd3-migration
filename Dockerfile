@@ -1,15 +1,16 @@
-FROM docker.io/r-base
+FROM rocker/r-ver:4.5.1
 
 WORKDIR /scripts
 
 RUN apt-get update && apt-get install -y \
-    libmariadb-dev-compat \
+    libpq-dev \
     libssl-dev \
     libxml2-dev \
-    libcurl4-openssl-dev
+    libcurl4-openssl-dev \
+    libcurl4t64
 
-RUN R -e "install.packages(c('RMariaDB', 'DBI', 'dplyr', 'dbplyr', 'httr', 'readxl'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('RPostgres', 'DBI', 'dplyr', 'dbplyr', 'httr', 'jsonlite', 'stringr'), repos='https://packagemanager.posit.co/cran/__linux__/jammy/latest')"
 
-COPY . ./
+COPY ./cron ./cron
 
 CMD ["bash"]
