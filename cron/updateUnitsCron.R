@@ -1,4 +1,4 @@
-library(RMariaDB)
+library(RPostgres)
 library(DBI)
 library(dbplyr)
 library(httr)
@@ -6,16 +6,15 @@ library(jsonlite)
 library(stringr)
 library(dplyr)
 
-# Connect to my-db as defined in /etc/mysql/my.cnf
-# con <- dbConnect(RMariaDB::MariaDB(), default.file = '/etc/mysql/my.cnf', group = "lhd")
-
-dbNameVar <- Sys.getenv("MYSQL_LHD_V2_DBNAME")
-dbHostVar <- Sys.getenv("MYSQL_LHD_V2_HOST")
-dbPasswordVar <- Sys.getenv("MYSQL_LHD_V2_PASSWORD")
-dbPortVar <- Sys.getenv("MYSQL_LHD_V2_PORT")
-dbUserVar <- Sys.getenv("MYSQL_LHD_V2_USER")
 lhdApiPassword <- Sys.getenv("LHD_API_PASSWORD")
-con <- dbConnect(RMariaDB::MariaDB(), username = dbUserVar, password = dbPasswordVar, host = dbHostVar, port = dbPortVar, dbname = dbNameVar)
+con <- dbConnect(
+  Postgres(),
+  host = Sys.getenv("POSTGRESQL_HOST", "127.0.0.1"),
+  dbname = Sys.getenv("POSTGRESQL_DBNAME", "lhd"),
+  user = Sys.getenv("POSTGRESQL_USER", "root"),
+  password = Sys.getenv("POSTGRESQL_PASSWORD", "ROOT"),
+  port = Sys.getenv("POSTGRESQL_PORT", 45432)
+)
 
 getScipersFromLhd <- function(con) {
   scipersId <- tbl(con, "unit") %>%
@@ -149,13 +148,11 @@ if (status_code(apiUnits) == 200) {
     if (!is.na(idResponsable) && idResponsable != '') {
       lhdResponsable <- searchOrCreateResponsible(con,idResponsable, df$responsible, i)
     }
-    query <- paste0("UPDATE unit SET responsible_id = ", ifelse(is.na(idResponsable), NULL, lhdResponsable$id_person), ", id_institut = ", lhdInstitut$id_institut,", name_unit = '",df$name[i],"' WHERE sciper_unit = ",df$id[i])
+    query <- paste0("UPDATE \"unit\" SET \"responsible_id\" = ", ifelse(is.na(idResponsable), NULL, lhdResponsable$id_person), ", \"id_institut\" = ", lhdInstitut$id_institut,", \"name_unit\" = '",df$name[i],"' WHERE \"sciper_unit\" = ",df$id[i])
 
     dbExecute(con, query)
     createSubunPro(con, lhdResponsable$id_person, df$id[i])
   }
-} else {
-  # print(paste("Error:", apiUnits))
 }
 
 # ---------------------------------------------------

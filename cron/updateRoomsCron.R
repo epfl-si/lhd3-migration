@@ -1,4 +1,4 @@
-library(RMariaDB)
+library(RPostgres)
 library(DBI)
 library(dbplyr)
 library(httr)
@@ -6,16 +6,15 @@ library(jsonlite)
 library(stringr)
 library(dplyr)
 
-# Connect to my-db as defined in /etc/mysql/my.cnf
-# con <- dbConnect(RMariaDB::MariaDB(), default.file = '/etc/mysql/my.cnf', group = "lhd")
-
-dbNameVar <- Sys.getenv("MYSQL_LHD_V2_DBNAME")
-dbHostVar <- Sys.getenv("MYSQL_LHD_V2_HOST")
-dbPasswordVar <- Sys.getenv("MYSQL_LHD_V2_PASSWORD")
-dbPortVar <- Sys.getenv("MYSQL_LHD_V2_PORT")
-dbUserVar <- Sys.getenv("MYSQL_LHD_V2_USER")
 lhdApiPassword <- Sys.getenv("LHD_API_PASSWORD")
-con <- dbConnect(RMariaDB::MariaDB(), username = dbUserVar, password = dbPasswordVar, host = dbHostVar, port = dbPortVar, dbname = dbNameVar)
+con <- dbConnect(
+  Postgres(),
+  host = Sys.getenv("POSTGRESQL_HOST", "127.0.0.1"),
+  dbname = Sys.getenv("POSTGRESQL_DBNAME", "lhd"),
+  user = Sys.getenv("POSTGRESQL_USER", "root"),
+  password = Sys.getenv("POSTGRESQL_PASSWORD", "ROOT"),
+  port = Sys.getenv("POSTGRESQL_PORT", 45432)
+)
 
 getLhdLabs <- function(con) {
   scipersId <- tbl(con, "lab") %>%
@@ -96,7 +95,7 @@ addApiLabTypeToDB <- function(df) {
       dbAppendTable(con, 'labType', newType)
     } else {
       facultyUseEscaped <- gsub("'", "''", facultyuse)
-      query <- paste0("UPDATE labType SET labType = '", facultyUseEscaped, "' WHERE id_labTypeCristal = '", dincat, "'")
+      query <- paste0("UPDATE \"labType\" SET \"labType\" = '", facultyUseEscaped, "' WHERE \"id_labTypeCristal\" = '", dincat, "'")
       dbExecute(con, query)
     }
   }
@@ -135,14 +134,12 @@ if (status_code(apiRooms) == 200) {
     parts <- strsplit(df$name[i], " ")[[1]]
     labId <- tail(parts, 1)
     newLabType <- getLabType(df$id[i], str_trim(df$facultyuse[i]), lhdLabs)
-    query <- paste0('UPDATE lab SET building = "', df$building$name[i], '"', ifelse(df$sector[i] != "Z", paste0(', sector = "', df$zone[i], '"'), ""), ', floor = "',
-                    df$floor[i], '", lab = "', labId, '", lab_display = "', df$name[i], '", site = "', df$building$site$label[i], '", vol = ', getVolume(df$surface[i], df$height[i]),
-                    ', lab_type_is_different = ', newLabType$is_different, ', id_labType = ', newLabType$lab_type,' WHERE sciper_lab = ',df$id[i])
+    query <- paste0('UPDATE \"lab\" SET \"building\" = \'', df$building$name[i], '\'', ifelse(df$sector[i] != "Z", paste0(', \"sector\" = \'', df$zone[i], '\''), ""), ', \"floor\" = \'',
+                    df$floor[i], '\', \"lab\" = \'', labId, '\', \"lab_display\" = \'', df$name[i], '\', \"site\" = \'', df$building$site$label[i], '\', \"vol\" = ', getVolume(df$surface[i], df$height[i]),
+                    ', \"lab_type_is_different\" = ', newLabType$is_different, ', \"id_labType\" = ', newLabType$lab_type,' WHERE \"sciper_lab\" = ',df$id[i])
 
     dbExecute(con, query)
   }
-} else {
-  # print(paste("Error:", apiUnits))
 }
 
 # ---------------------------------------------------
