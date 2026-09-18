@@ -1,4 +1,4 @@
-FROM docker.io/r-base:4.6.0
+FROM docker.io/rocker/r-ver:4.6.0
 
 WORKDIR /scripts
 
